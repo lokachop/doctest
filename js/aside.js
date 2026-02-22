@@ -132,13 +132,14 @@ function recomputeAside(search) {
 
 
 				var entryImg = document.createElement("img");
-				entryImg.setAttribute("src", "/img/realm/" + func["realm"] + ".png")
+				entryImg.setAttribute("src", "/doctest/img/realm/" + func["realm"] + ".png")
 				entryImg.setAttribute("class", "realm-aside");
 				entryLi.append(entryImg);
 
 
 				var entrySpan = document.createElement("a");
-				entrySpan.setAttribute("href", "/subpage/" + groupTitle + "/" + categoryTitle + "/" + func["lonesig"] + ".html");
+				// switch /doctest to /zvox when on main repo!
+				entrySpan.setAttribute("href", "/doctest/subpage/" + groupTitle + "/" + categoryTitle + "/" + func["lonesig"] + ".html");
 				entrySpan.textContent = func["lonesig"];
 				entryLi.append(entrySpan);
 
