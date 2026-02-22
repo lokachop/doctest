@@ -1,0 +1,37 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: Build Docs
+permissions:
+  contents: write
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+jobs:
+  build:
+    name: Build docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup python
+        uses: actions/setup-python@v6.2.0
+      - name: Checkout the doc generator
+        uses: actions/checkout@v4
+        with:
+          ref:
+            doc
+      - name: Checkout the branch to build docs on
+        uses: actions/checkout@v4
+        with:
+          path:
+            togen
+      - name: Run the python docgen
+        run: python3 ./zvdoc.py
+
+      - name: Deploy
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs
+        
