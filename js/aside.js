@@ -4,7 +4,7 @@ aside = document.getElementById("aside");
 
 
 var defs;
-fetch("js/defs.json").then((res) => res.text()).then((text) => {
+fetch("/doctest/js/defs.json").then((res) => res.text()).then((text) => {
 	defs = JSON.parse(text);
 
 	var searchQuery = sessionStorage.getItem("searchQuery");
