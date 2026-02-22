@@ -25,6 +25,7 @@ ZVox = ZVox or {}
 ---@example_end
 function ZVox.AddonAPI.GetBlockAtPos(univ, x, y, z)
 	print("Do something...")
+	print("Bleh.")
 end
 
 ---Performs a raycast on a given universe.
