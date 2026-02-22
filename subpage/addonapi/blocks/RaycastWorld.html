@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>ZVox.AddonAPI.RaycastWorld - ZVDoc</title>
+		<link rel="stylesheet" href="/css/zvdoc.css">
+
+		<!-- Inter font -->
+		<link rel="preconnect" href="https://rsms.me/">
+		<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+		<!-- Prism (Syntax Highlighter) -->
+		<link href="/lib/prism/prism.css" rel="stylesheet"/>
+
+		<script src="/js/aside.js" defer></script>
+	</head>
+
+	<header>
+		<div class="header-container">
+		<a href="/index.html">
+			<img src="/img/logo.png" width="124px" style="image-rendering: pixelated;">
+			<h1>Docs</h1>
+		</a>
+		</div>
+	</header>
+
+	<div class="central-container">
+		<aside>
+			<input type="text" placeholder="Search..." id="sidebar-search">
+			<div class="scroller" id="aside">
+				<ul id="aside-container"></ul>
+			</div>
+		</aside>
+
+		<main>
+			<pre style="font-size: 14px;"><img src="/img/realm/shared.png" height="14px" class="realm"/><code class="language-lua noclamp">TraceResult? ZVox.AddonAPI.RaycastWorld(universe univ, Vector pos, Vector dir, integer steps, boolean killOOB, integer groupMask)</code></pre>
+			<a href="https://github.com/lokachop/zvox/blob/main/gamemodes/gamemode/doc.lua#L40">View source</a>
+
+			<h2>Description</h2>
+			<div class="desc-block">
+				Performs a raycast on a given universe.
+			</div>
+		
+<h2>Arguments</h2><div class="arg-block"><ol><li><span class="span-arg-type">universe</span> <span class="span-arg-name">univ</span><br><span class="span-arg-desc">Universe to raycast in</span></li>
+<li><span class="span-arg-type">Vector</span> <span class="span-arg-name">pos</span><br><span class="span-arg-desc">Origin position</span></li>
+<li><span class="span-arg-type">Vector</span> <span class="span-arg-name">dir</span><br><span class="span-arg-desc">Direction to raycast in, must be normalized</span></li>
+<li><span class="span-arg-type">integer</span> <span class="span-arg-name">steps</span><br><span class="span-arg-desc">How many steps shall we take at most</span></li>
+<li><span class="span-arg-type">boolean</span> <span class="span-arg-name">killOOB</span><br><span class="span-arg-desc">Whether to kill raycasts that are out of bounds or not</span></li>
+<li><span class="span-arg-type">integer</span> <span class="span-arg-name">groupMask</span><br><span class="span-arg-desc">Mask of what we can hit</span></li>
+</ol></div>
+<h2>Returns</h2><div class="ret-block"><ol><li><span class="span-arg-type">TraceResult?</span> <span class="span-arg-name">ret</span><br><span class="span-arg-desc">Raycast result, nil if missing any of the arguments</span></li>
+</ol></div>
+
+		</main>
+	</div>
+
+	<script src="/lib/prism/prism.js"></script>
+</html>

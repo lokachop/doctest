@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>ZVox.AddonAPI.GetBlockAtPos - ZVDoc</title>
+		<link rel="stylesheet" href="/css/zvdoc.css">
+
+		<!-- Inter font -->
+		<link rel="preconnect" href="https://rsms.me/">
+		<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+		<!-- Prism (Syntax Highlighter) -->
+		<link href="/lib/prism/prism.css" rel="stylesheet"/>
+
+		<script src="/js/aside.js" defer></script>
+	</head>
+
+	<header>
+		<div class="header-container">
+		<a href="/index.html">
+			<img src="/img/logo.png" width="124px" style="image-rendering: pixelated;">
+			<h1>Docs</h1>
+		</a>
+		</div>
+	</header>
+
+	<div class="central-container">
+		<aside>
+			<input type="text" placeholder="Search..." id="sidebar-search">
+			<div class="scroller" id="aside">
+				<ul id="aside-container"></ul>
+			</div>
+		</aside>
+
+		<main>
+			<pre style="font-size: 14px;"><img src="/img/realm/shared.png" height="14px" class="realm"/><code class="language-lua noclamp">integer?, integer? ZVox.AddonAPI.GetBlockAtPos(universe univ, integer x, integer y, integer z)</code></pre>
+			<a href="https://github.com/lokachop/zvox/blob/main/gamemodes/gamemode/doc.lua#L26">View source</a>
+
+			<h2>Description</h2>
+			<div class="desc-block">
+				Gets the voxel ID and voxel state at a certain position given a universe.
+			</div>
+		
+<h2>Arguments</h2><div class="arg-block"><ol><li><span class="span-arg-type">universe</span> <span class="span-arg-name">univ</span><br><span class="span-arg-desc">Universe to query in</span></li>
+<li><span class="span-arg-type">integer</span> <span class="span-arg-name">x</span><br><span class="span-arg-desc">X position to query</span></li>
+<li><span class="span-arg-type">integer</span> <span class="span-arg-name">y</span><br><span class="span-arg-desc">Y position to query</span></li>
+<li><span class="span-arg-type">integer</span> <span class="span-arg-name">z</span><br><span class="span-arg-desc">Z position to query</span></li>
+</ol></div>
+<h2>Returns</h2><div class="ret-block"><ol><li><span class="span-arg-type">integer?</span> <span class="span-arg-name">voxelID</span><br><span class="span-arg-desc">The voxel ID at that pos, nil if the universe doesn't exist</span></li>
+<li><span class="span-arg-type">integer?</span> <span class="span-arg-name">voxelState</span><br><span class="span-arg-desc">The voxel state at that pos</span></li>
+</ol></div>
+<h2>Examples</h2><div class="example-block"><h3>Gets the block at 0, 0, 0 from the main universe.</h3>
+<pre style="font-size: 14px;" class="line-numbers"><code class="language-lua">local univ = ZVox.AddonAPI.GetUniverseByName("main")
+local voxID, voxState = ZVox.AddonAPI.GetBlockAtPos(univ, 0, 0, 0)
+</code></pre><h3>Checks for a block being air.</h3>
+<pre style="font-size: 14px;" class="line-numbers"><code class="language-lua">local univ = ZVox.AddonAPI.GetUniverseByName("main")
+local cX, cY, cZ = 1, 1, 1
+local voxID, voxState = ZVox.AddonAPI.GetBlockAtPos(univ, cX, cY, cZ)
+local airID = ZVox.AddonAPI.GetVoxelID("zvox:air")
+if voxID == airID then
+	print("The voxel at " .. cX .. ", " .. cY .. ", " .. cZ .. " is air!")
+end
+</code></pre></div>
+		</main>
+	</div>
+
+	<script src="/lib/prism/prism.js"></script>
+</html>
