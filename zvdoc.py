@@ -4,16 +4,15 @@ from os.path import isfile, join, splitext, isdir, relpath
 import re
 import json
 
+TARGET_DIRECTORY_PARSE = "./togen/"
+
 def createDirIfNotReal(path):
 	if not isdir(path):
 		mkdir(path)
 
-
 createDirIfNotReal("./docs/")
 createDirIfNotReal("./docs/subpage/")
 createDirIfNotReal("./docs/js/")
-
-TARGET_DIRECTORY_PARSE = "./togen/"
 
 foundFiles = []
 allowedExt = {
@@ -43,9 +42,10 @@ def recursive_find(path):
 				continue
 
 			recursive_find(filePath)
-	
+
 
 recursive_find(TARGET_DIRECTORY_PARSE)
+print(f"Found {len(foundFiles)} files to parse.")
 
 
 fileDefs = []
@@ -53,20 +53,16 @@ def push_current_file_def(currDef):
 	fileDefs.append(currDef)
 	currDef = {}
 
-currExampleTitle = "None"
-currExampleLines = ""
 def parse_at(atContent, currDef):
-	global currExampleTitle
-	global currExampleLines
 	#print(f"|{atContent}")
 
 	atType = re.search(r"@([^ \n]+) ?(.*)", atContent)
 	if atType == None:
 		return
-		
+
 	atTypeStr = atType.group(1)
 	atRestStr = atType.group(2)
-	
+
 	if not "params" in currDef:
 		currDef["params"] = []
 
@@ -75,7 +71,7 @@ def parse_at(atContent, currDef):
 
 	if not "examples" in currDef:
 		currDef["examples"] = []
-	
+
 	# crime here let's gooo
 	# realms
 	if atTypeStr == "client":
@@ -101,7 +97,7 @@ def parse_at(atContent, currDef):
 		currDef["group"] = atRestStr
 	elif atTypeStr == "category":
 		currDef["category"] = atRestStr
-		
+
 
 	# params & rets
 	elif atTypeStr == "param":
@@ -126,21 +122,6 @@ def parse_at(atContent, currDef):
 			"type": retType,
 			"desc": retDesc,
 		})
-	# example parsing
-	elif atTypeStr == "example_begin":
-		currExampleTitle = atRestStr
-		currExampleLines = ""
-	elif atTypeStr == "example":
-		currExampleLines += atRestStr + "\n"
-	elif atTypeStr == "example_end":
-		currDef["examples"].append({
-			"title": currExampleTitle,
-			"content": currExampleLines
-		})
-
-	
-
-
 
 def obtain_file_defs(filePath):
 	fPtr = open(filePath, "r")
@@ -151,8 +132,34 @@ def obtain_file_defs(filePath):
 
 	currentDef = {}
 	lineAcc = 0
+
+	in_example = False
+	example_lines = []
+	example_title = ""
+
 	for line in fPtr:
 		lineAcc = lineAcc + 1
+
+		if in_example:
+			if re.search(r"---@example_end", line):
+				if not "examples" in currentDef:
+					currentDef["examples"] = []
+				currentDef["examples"].append({
+					"title": example_title,
+					"content": "".join(example_lines).strip()
+				})
+				in_example = False
+				example_lines = []
+				example_title = ""
+				continue
+
+			match = re.match(r"---(.*)", line)
+			if match:
+				example_lines.append(match.group(1) + "\n")
+			else:
+				raise Exception(f"Error in {filePath} at line {lineAcc}: Example line does not start with '---': {line.strip()}")
+			continue
+
 		if not foundFlag:
 			hasThree = re.search(r"-{3}([^@\n]*)", line)
 
@@ -163,6 +170,12 @@ def obtain_file_defs(filePath):
 			messageDesc = hasThree.group(1)
 			currentDef["desc"] = messageDesc
 		else:
+			example_start_match = re.search(r"---@example_begin ?(.*)", line)
+			if example_start_match:
+				in_example = True
+				example_title = example_start_match.group(1)
+				continue
+
 			hasAt = re.search(r"-{3}(@.*)", line)
 
 			if hasAt == None:
@@ -176,21 +189,22 @@ def obtain_file_defs(filePath):
 
 				if sendableFlag:
 					sigMatch = re.search(r"function ([^(]+)", line)
-					sig = sigMatch.group(1)
-					currentDef["sig"] = sig
+					if sigMatch:
+						sig = sigMatch.group(1)
+						currentDef["sig"] = sig
 
-					splitSig = sig.split(".")
-					currentDef["lonesig"] = splitSig[len(splitSig) - 1]
-					currentDef["src"] = relpath(filePath, TARGET_DIRECTORY_PARSE)
-					currentDef["line"] = lineAcc
+						splitSig = sig.split(".")
+						currentDef["lonesig"] = splitSig[len(splitSig) - 1]
+						currentDef["src"] = relpath(filePath, TARGET_DIRECTORY_PARSE)
+						currentDef["line"] = lineAcc
 
-					push_current_file_def(currentDef)
+						push_current_file_def(currentDef)
 					currentDef = {}
 				continue
 
 			atContent = hasAt.group(1)
 			parse_at(atContent, currentDef)
-			
+
 
 
 	fPtr.close()
@@ -198,11 +212,13 @@ def obtain_file_defs(filePath):
 
 for filePath in foundFiles:
 	obtain_file_defs(filePath)
+print(f"Extracted {len(fileDefs)} function definitions.")
 
 
 
 #for defGet in fileDefs:
 	#print(defGet)
+print("Writing JSON definitions...")
 
 with open("docs/js/defs.json", "w") as fPtr:
 	json.dump(fileDefs, fPtr)
@@ -241,10 +257,16 @@ def fillTemplate(funcDef):
 
 	descStr = funcDef["desc"]
 	if "internal" in funcDef:
-		descStr += f"""\n<div class="internal-block">\n<h3>Internal</h3>\nThis function is internal, so you probably shouldn't use it!</div>\n"""
+		descStr += f"""
+<div class="internal-block">
+<h3>Internal</h3>
+This function is internal, so you probably shouldn't use it!</div>
+"""
 
 	if "warn" in funcDef:
-		descStr += f"""\n<div class="warn-block">\n<h3>Warning</h3>{funcDef["warn"]}</div>"""
+		descStr += f"""
+<div class="warn-block">
+<h3>Warning</h3>{funcDef["warn"]}</div>"""
 
 
 	paramsStr = ""
@@ -252,7 +274,8 @@ def fillTemplate(funcDef):
 		paramsStr += """<h2>Arguments</h2><div class="arg-block"><ol>"""
 
 	for param in funcDef["params"]:
-		paramsStr += f"""<li><span class="span-arg-type">{param["type"]}</span> <span class="span-arg-name">{param["name"]}</span><br><span class="span-arg-desc">{param["desc"]}</span></li>\n"""
+		paramsStr += f"""<li><span class="span-arg-type">{param["type"]}</span> <span class="span-arg-name">{param["name"]}</span><br><span class="span-arg-desc">{param["desc"]}</span></li>
+"""
 
 	if len(funcDef["params"]) > 0:
 		paramsStr += """</ol></div>"""
@@ -260,10 +283,11 @@ def fillTemplate(funcDef):
 	returnsStr = ""
 	if len(funcDef["returns"]) > 0:
 		returnsStr += """<h2>Returns</h2><div class="ret-block"><ol>"""
-	
+
 	for ret in funcDef["returns"]:
-		returnsStr += f"""<li><span class="span-arg-type">{ret["type"]}</span> <span class="span-arg-name">{ret["name"]}</span><br><span class="span-arg-desc">{ret["desc"]}</span></li>\n"""
-	
+		returnsStr += f"""<li><span class="span-arg-type">{ret["type"]}</span> <span class="span-arg-name">{ret["name"]}</span><br><span class="span-arg-desc">{ret["desc"]}</span></li>
+"""
+
 	if len(funcDef["returns"]) > 0:
 		returnsStr += """</ol></div>"""
 
@@ -273,7 +297,8 @@ def fillTemplate(funcDef):
 		examplesStr += """<h2>Examples</h2><div class="example-block">"""
 
 	for example in funcDef["examples"]:
-		examplesStr += f"""<h3>{example["title"]}</h3>\n<pre style="font-size: 14px;" class="line-numbers"><code class="language-lua">{example["content"]}</code></pre>"""
+		examplesStr += f"""<h3>{example["title"]}</h3>
+<pre style="font-size: 14px;" class="line-numbers"><code class="language-lua">{example["content"]}</code></pre>"""
 
 	if len(funcDef["examples"]) > 0:
 		examplesStr += """</div>"""
@@ -291,11 +316,13 @@ def fillTemplate(funcDef):
 
 
 
+print("Generating HTML pages...")
 for funcDef in fileDefs:
 	createDirIfNotReal(f"./docs/subpage/{funcDef["group"]}/")
 	createDirIfNotReal(f"./docs/subpage/{funcDef["group"]}/{funcDef["category"]}/")
 
-	fPath = f"./docs/subpage/{funcDef["group"]}/{funcDef["category"]}/{funcDef["lonesig"]}.html" 
-
+	fPath = f"./docs/subpage/{funcDef["group"]}/{funcDef["category"]}/{funcDef["lonesig"]}.html"
 	with open(fPath, "w") as fPtr:
 		fPtr.write(fillTemplate(funcDef))
+
+print("Done!")
