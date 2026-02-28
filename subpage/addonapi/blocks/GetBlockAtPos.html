@@ -57,16 +57,14 @@
 </ol></div>
 <h2>Examples</h2><div class="example-block"><h3>Gets the block at 0, 0, 0 from the main universe.</h3>
 <pre style="font-size: 14px;" class="line-numbers"><code class="language-lua">local univ = ZVox.AddonAPI.GetUniverseByName("main")
-local voxID, voxState = ZVox.AddonAPI.GetBlockAtPos(univ, 0, 0, 0)
-</code></pre><h3>Checks for a block being air.</h3>
+ local voxID, voxState = ZVox.AddonAPI.GetBlockAtPos(univ, 0, 0, 0)</code></pre><h3>Checks for a block being air.</h3>
 <pre style="font-size: 14px;" class="line-numbers"><code class="language-lua">local univ = ZVox.AddonAPI.GetUniverseByName("main")
-local cX, cY, cZ = 1, 1, 1
-local voxID, voxState = ZVox.AddonAPI.GetBlockAtPos(univ, cX, cY, cZ)
-local airID = ZVox.AddonAPI.GetVoxelID("zvox:air")
-if voxID == airID then
-	print("The voxel at " .. cX .. ", " .. cY .. ", " .. cZ .. " is air!")
-end
-</code></pre></div>
+ local cX, cY, cZ = 1, 1, 1
+ local voxID, voxState = ZVox.AddonAPI.GetBlockAtPos(univ, cX, cY, cZ)
+ local airID = ZVox.AddonAPI.GetVoxelID("zvox:air")
+ if voxID == airID then
+ 	print("The voxel at " .. cX .. ", " .. cY .. ", " .. cZ .. " is air!")
+ end</code></pre></div>
 		</main>
 	</div>
 
