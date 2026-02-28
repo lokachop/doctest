@@ -325,4 +325,56 @@ for funcDef in fileDefs:
 	with open(fPath, "w") as fPtr:
 		fPtr.write(fillTemplate(funcDef))
 
+
+def writeLuaLSFuncDef(funcDef):
+	outStr = ""
+
+	# desc
+	outStr += f"---{funcDef["desc"]}\n"
+
+	# realm
+	outStr += f"---@{funcDef["realm"]}\n"
+
+	# internal
+	if "internal" in funcDef:
+		outStr += f"---@internal\n"
+	
+	# params
+	for param in funcDef["params"]:
+		outStr += f"---@param {param["name"]} {param["type"]} {param["desc"]}\n"
+
+	# returns
+	for ret in funcDef["returns"]:
+		outStr += f"---@return {ret["type"]} {ret["name"]} {ret["desc"]}\n"
+
+	# function signature
+	outStr += f"function {funcDef["sig"]}("
+
+	paramCount = len(funcDef["params"])
+	for i in range(0, paramCount):
+		param = funcDef["params"][i]
+		outStr += f"{param["name"]}"
+
+		if (i + 1) < paramCount:
+			outStr += ", "
+	outStr += ") end\n"
+		
+	
+	return outStr
+
+
+print("Generating the LuaLS definition file...")
+with open("./docs/zvox-luals.lua", "w") as fPtr:
+	fPtr.write("---@meta\n\n")
+
+	fPtr.write("ZVox = ZVox or {}\n")
+	fPtr.write("ZVox.AddonAPI = ZVox.AddonAPI or {}\n\n")
+
+	# our custom types
+	fPtr.write("---@alias universe table Universe object\n")
+	fPtr.write("---@alias worldgenerator table\n\n")
+
+	for funcDef in fileDefs:
+		fPtr.write(writeLuaLSFuncDef(funcDef))
+
 print("Done!")
