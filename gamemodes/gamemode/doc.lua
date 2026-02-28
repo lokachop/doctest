@@ -29,6 +29,7 @@ function ZVox.AddonAPI.GetBlockAtPos(univ, x, y, z)
 	print("Please work?...")
 	print("Please?...")
 	print("Final one, hopefully?")
+	print("Now with definitions!")
 end
 
 ---Performs a raycast on a given universe.
