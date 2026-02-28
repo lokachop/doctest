@@ -11,17 +11,17 @@ ZVox = ZVox or {}
 ---@return integer? voxelID The voxel ID at that pos, nil if the universe doesn't exist
 ---@return integer? voxelState The voxel state at that pos
 ---@example_begin Gets the block at 0, 0, 0 from the main universe.
----@example local univ = ZVox.AddonAPI.GetUniverseByName("main")
----@example local voxID, voxState = ZVox.AddonAPI.GetBlockAtPos(univ, 0, 0, 0)
+--- local univ = ZVox.AddonAPI.GetUniverseByName("main")
+--- local voxID, voxState = ZVox.AddonAPI.GetBlockAtPos(univ, 0, 0, 0)
 ---@example_end
 ---@example_begin Checks for a block being air.
----@example local univ = ZVox.AddonAPI.GetUniverseByName("main")
----@example local cX, cY, cZ = 1, 1, 1
----@example local voxID, voxState = ZVox.AddonAPI.GetBlockAtPos(univ, cX, cY, cZ)
----@example local airID = ZVox.AddonAPI.GetVoxelID("zvox:air")
----@example if voxID == airID then
----@example 	print("The voxel at " .. cX .. ", " .. cY .. ", " .. cZ .. " is air!")
----@example end
+--- local univ = ZVox.AddonAPI.GetUniverseByName("main")
+--- local cX, cY, cZ = 1, 1, 1
+--- local voxID, voxState = ZVox.AddonAPI.GetBlockAtPos(univ, cX, cY, cZ)
+--- local airID = ZVox.AddonAPI.GetVoxelID("zvox:air")
+--- if voxID == airID then
+--- 	print("The voxel at " .. cX .. ", " .. cY .. ", " .. cZ .. " is air!")
+--- end
 ---@example_end
 function ZVox.AddonAPI.GetBlockAtPos(univ, x, y, z)
 	print("Do something...")
